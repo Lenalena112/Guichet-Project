@@ -1,0 +1,106 @@
+{
+  "realm": "horizon",
+  "displayName": "Horizon Emploi (fictif)",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "accessTokenLifespan": 300,
+  "roles": {
+    "realm": [
+      { "name": "demandeur", "description": "Demandeur d'emploi : consulte ses propres rendez-vous" },
+      { "name": "conseiller", "description": "Conseiller : gère les rendez-vous de son portefeuille" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "guichet-console",
+      "name": "Console Guichet (Angular)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:4200/*"],
+      "webOrigins": ["http://localhost:4200"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/*"
+      }
+    },
+    {
+      "clientId": "rdv-service",
+      "name": "Service rendez-vous",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "guichet-dev",
+      "name": "Tests en ligne de commande (développement uniquement)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false
+    }
+  ],
+  "users": [
+    {
+      "username": "ines.martin",
+      "firstName": "Inès",
+      "lastName": "Martin",
+      "email": "ines.martin@horizon-emploi.test",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "guichet", "temporary": false }],
+      "realmRoles": ["demandeur"]
+    },
+    {
+      "username": "nolwenn.kerjean",
+      "firstName": "Nolwenn",
+      "lastName": "Kerjean",
+      "email": "nolwenn.kerjean@horizon-emploi.test",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "guichet", "temporary": false }],
+      "realmRoles": ["demandeur"]
+    },
+    {
+      "username": "theo.bernard",
+      "firstName": "Théo",
+      "lastName": "Bernard",
+      "email": "theo.bernard@horizon-emploi.test",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "guichet", "temporary": false }],
+      "realmRoles": ["demandeur"]
+    },
+    {
+      "username": "maelle.le-goff",
+      "firstName": "Maëlle",
+      "lastName": "Le Goff",
+      "email": "maelle.le-goff@horizon-emploi.test",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "guichet", "temporary": false }],
+      "realmRoles": ["conseiller"]
+    },
+    {
+      "username": "yanis.haddad",
+      "firstName": "Yanis",
+      "lastName": "Haddad",
+      "email": "yanis.haddad@horizon-emploi.test",
+      "emailVerified": true,
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "guichet", "temporary": false }],
+      "realmRoles": ["conseiller"]
+    }
+  ]
+}

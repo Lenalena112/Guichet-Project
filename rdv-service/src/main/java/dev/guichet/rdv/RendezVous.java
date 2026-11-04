@@ -8,5 +8,10 @@ import java.util.UUID;
  * Les deux personnes sont désignées par leur identifiant de connexion : c'est ce que Keycloak
  * mettra dans le token (claim preferred_username).
  */
-public record RendezVous(UUID id, String demandeur, String conseiller, LocalDateTime debut, String objet) {
+public record RendezVous(
+        UUID id,
+        String demandeur,
+        String conseiller,
+        LocalDateTime debut,
+        String objet) {
 }
