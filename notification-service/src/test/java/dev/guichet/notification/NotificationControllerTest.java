@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -18,16 +19,24 @@ class NotificationControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+
+    @Test
+    void refuseUneRequeteSansToken() throws Exception {
+        mockMvc.perform(get("/api/notifications"))
+                .andExpect(status().isUnauthorized());
+    }
+
+
     @Test
     void enregistreUneNotificationPuisLaListe() throws Exception {
-        mockMvc.perform(post("/api/notifications")
+        mockMvc.perform(post("/api/notifications").with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"destinataire": "ines.martin", "message": "Rendez-vous demain"}
                                 """))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/api/notifications"))
+        mockMvc.perform(get("/api/notifications").with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].destinataire").value("ines.martin"));
@@ -35,7 +44,7 @@ class NotificationControllerTest {
 
     @Test
     void refuseUneNotificationSansDestinataire() throws Exception {
-        mockMvc.perform(post("/api/notifications")
+        mockMvc.perform(post("/api/notifications").with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"destinataire": "", "message": "Rendez-vous demain"}

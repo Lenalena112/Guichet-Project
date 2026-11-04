@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: rdv-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/horizon
   mvc:
     problemdetails:
       enabled: true

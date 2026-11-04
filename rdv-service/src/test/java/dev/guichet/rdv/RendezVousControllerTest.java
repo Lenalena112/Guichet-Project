@@ -1,5 +1,6 @@
 package dev.guichet.rdv;
 
+import dev.guichet.rdv.securite.SecuriteConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -15,13 +16,14 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RendezVousController.class)
-@Import(RendezVousRepository.class)
+@Import({RendezVousRepository.class, SecuriteConfig.class})
 class RendezVousControllerTest {
 
     @Autowired
@@ -32,7 +34,7 @@ class RendezVousControllerTest {
 
     @Test
     void listeLesRendezVousDeDemonstration() throws Exception {
-        mockMvc.perform(get("/api/rendez-vous"))
+        mockMvc.perform(get("/api/rendez-vous").with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].demandeur").value("ines.martin"));
@@ -40,13 +42,13 @@ class RendezVousControllerTest {
 
     @Test
     void renvoie404PourUnRendezVousInconnu() throws Exception {
-        mockMvc.perform(get("/api/rendez-vous/{id}", UUID.randomUUID()))
+        mockMvc.perform(get("/api/rendez-vous/{id}", UUID.randomUUID()).with(jwt()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void creeUnRendezVousEtNotifieLeDemandeur() throws Exception {
-        mockMvc.perform(post("/api/rendez-vous")
+        mockMvc.perform(post("/api/rendez-vous").with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"demandeur": "ines.martin", "conseiller": "maelle.le-goff",
@@ -61,13 +63,32 @@ class RendezVousControllerTest {
 
     @Test
     void refuseUnRendezVousDansLePasse() throws Exception {
-        mockMvc.perform(post("/api/rendez-vous")
+        mockMvc.perform(post("/api/rendez-vous").with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"demandeur": "ines.martin", "conseiller": "maelle.le-goff",
                                  "debut": "2000-01-15T10:00:00", "objet": "Bilan"}
                                 """))
                 .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(notificationClient);
+    }
+
+    @Test
+    void refuseUneRequeteSansToken() throws Exception {
+        mockMvc.perform(get("/api/rendez-vous"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void refuseUneCreationSansTokenSansNotifier() throws Exception {
+        mockMvc.perform(post("/api/rendez-vous")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"demandeur": "ines.martin", "conseiller": "maelle.le-goff",
+                                 "debut": "2099-01-15T10:00:00", "objet": "Bilan"}
+                                """))
+                .andExpect(status().isUnauthorized());
 
         verifyNoInteractions(notificationClient);
     }
