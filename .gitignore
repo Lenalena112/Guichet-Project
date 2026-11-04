@@ -1,0 +1,16 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/*
+!console/.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets locaux (ne jamais commiter)
+.env

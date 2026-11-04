@@ -1,0 +1,19 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: rdv-service
+  mvc:
+    problemdetails:
+      enabled: true
+
+guichet:
+  notification-service:
+    url: http://localhost:8082
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

@@ -1,0 +1,51 @@
+<header>
+  <h1>Guichet</h1>
+  <p>Rendez-vous d'Horizon Emploi (organisme fictif)</p>
+</header>
+
+@if (erreur(); as message) {
+  <p class="erreur">{{ message }}</p>
+}
+
+<main>
+  <section>
+    <h2>Rendez-vous</h2>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Demandeur</th><th>Conseiller</th><th>Objet</th></tr>
+      </thead>
+      <tbody>
+        @for (rdv of rendezVous(); track rdv.id) {
+          <tr>
+            <td>{{ rdv.debut | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ rdv.demandeur }}</td>
+            <td>{{ rdv.conseiller }}</td>
+            <td>{{ rdv.objet }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4">Aucun rendez-vous.</td></tr>
+        }
+      </tbody>
+    </table>
+
+    <h2>Nouveau rendez-vous</h2>
+    <form [formGroup]="formulaire" (ngSubmit)="creer()">
+      <label>Demandeur <input formControlName="demandeur" placeholder="ines.martin"></label>
+      <label>Conseiller <input formControlName="conseiller" placeholder="maelle.le-goff"></label>
+      <label>Date <input type="datetime-local" formControlName="debut"></label>
+      <label>Objet <input formControlName="objet" placeholder="Point mensuel"></label>
+      <button type="submit" [disabled]="formulaire.invalid">Créer</button>
+    </form>
+  </section>
+
+  <aside>
+    <h2>Notifications</h2>
+    <ul>
+      @for (notification of notifications(); track notification.id) {
+        <li><strong>{{ notification.destinataire }}</strong> : {{ notification.message }}</li>
+      } @empty {
+        <li>Aucune notification.</li>
+      }
+    </ul>
+  </aside>
+</main>

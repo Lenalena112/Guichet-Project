@@ -1,0 +1,10 @@
+{
+  "/api/rendez-vous": {
+    "target": "http://localhost:8081",
+    "secure": false
+  },
+  "/api/notifications": {
+    "target": "http://localhost:8082",
+    "secure": false
+  }
+}
